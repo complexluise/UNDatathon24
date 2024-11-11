@@ -50,12 +50,13 @@ class LayerFactory:
         self.distance_strategy = distance_strategy
         self.threshold = threshold
 
-    def create_layer(self, barrios_data, attributes_list):
+    def create_layer(self, barrios_data: pd.DataFrame, attributes_list: list, node_column_name: str):
         """Creates a network layer based on the specified attributes.
 
         Args:
             barrios_data (pd.DataFrame): DataFrame containing neighborhood data and attributes.
             attributes_list (list): List of attribute column names to form the vector.
+            node_column_name (str): Name of the column containing neighborhood names.
 
         Returns:
             nx.Graph: Graph of the layer with weighted edges.
@@ -71,7 +72,7 @@ class LayerFactory:
 
                     if distance <= self.threshold:
                         layer_graph.add_edge(
-                            barrio_i['barrio_id'], barrio_j['barrio_id'], weight=1 / (1 + distance)
+                            barrio_i[node_column_name], barrio_j[node_column_name], weight=1 / (1 + distance)
                         )
 
         return layer_graph
@@ -88,8 +89,9 @@ class MultiplexNetwork:
         layers (dict): Dictionary storing the network layers.
     """
 
-    def __init__(self, barrios_data):
+    def __init__(self, barrios_data, node_column_name):
         self.barrios_data = barrios_data
+        self.node_column_name = node_column_name
         self.layers = {}
 
     def add_layer(self, layer_name, attributes_list, distance_strategy, threshold):
@@ -102,7 +104,7 @@ class MultiplexNetwork:
             threshold (float): Connection threshold.
         """
         layer_factory = LayerFactory(distance_strategy, threshold)
-        layer_graph = layer_factory.create_layer(self.barrios_data, attributes_list)
+        layer_graph = layer_factory.create_layer(self.barrios_data, attributes_list, self.node_column_name)
         self.layers[layer_name] = layer_graph
 
     def get_layer(self, attribute_column):
