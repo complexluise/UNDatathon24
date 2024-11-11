@@ -92,17 +92,18 @@ class MultiplexNetwork:
         self.barrios_data = barrios_data
         self.layers = {}
 
-    def add_layer(self, attributes_list, distance_strategy, threshold):
+    def add_layer(self, layer_name, attributes_list, distance_strategy, threshold):
         """Adds a layer to the multiplex network for a list of attributes.
 
         Args:
+            layer_name (str): Name of the layer.
             attributes_list (list): List of attribute column names to form the vector.
             distance_strategy (DistanceStrategy): Strategy for calculating distances.
             threshold (float): Connection threshold.
         """
         layer_factory = LayerFactory(distance_strategy, threshold)
         layer_graph = layer_factory.create_layer(self.barrios_data, attributes_list)
-        self.layers[tuple(attributes_list)] = layer_graph
+        self.layers[layer_name] = layer_graph
 
     def get_layer(self, attribute_column):
         """Retrieves a specific layer from the multiplex network.
