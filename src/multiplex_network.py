@@ -50,12 +50,12 @@ class LayerFactory:
         self.distance_strategy = distance_strategy
         self.threshold = threshold
 
-    def create_layer(self, barrios_data, attribute_column):
-        """Creates a network layer based on the specified attribute.
+    def create_layer(self, barrios_data, attributes_list):
+        """Creates a network layer based on the specified attributes.
 
         Args:
             barrios_data (pd.DataFrame): DataFrame containing neighborhood data and attributes.
-            attribute_column (str): Name of the attribute column for this layer.
+            attributes_list (list): List of attribute column names to form the vector.
 
         Returns:
             nx.Graph: Graph of the layer with weighted edges.
@@ -65,10 +65,9 @@ class LayerFactory:
         for i, barrio_i in barrios_data.iterrows():
             for j, barrio_j in barrios_data.iterrows():
                 if i < j:
-                    distance = self.distance_strategy.calculate(
-                        barrio_i[attribute_column],
-                        barrio_j[attribute_column]
-                    )
+                    vector1 = barrio_i[attributes_list].values
+                    vector2 = barrio_j[attributes_list].values
+                    distance = self.distance_strategy.calculate(vector1, vector2)
 
                     if distance <= self.threshold:
                         layer_graph.add_edge(
@@ -93,17 +92,17 @@ class MultiplexNetwork:
         self.barrios_data = barrios_data
         self.layers = {}
 
-    def add_layer(self, attribute_column, distance_strategy, threshold):
-        """Adds a layer to the multiplex network for a specific attribute.
+    def add_layer(self, attributes_list, distance_strategy, threshold):
+        """Adds a layer to the multiplex network for a list of attributes.
 
         Args:
-            attribute_column (str): Name of the attribute column.
+            attributes_list (list): List of attribute column names to form the vector.
             distance_strategy (DistanceStrategy): Strategy for calculating distances.
             threshold (float): Connection threshold.
         """
         layer_factory = LayerFactory(distance_strategy, threshold)
-        layer_graph = layer_factory.create_layer(self.barrios_data, attribute_column)
-        self.layers[attribute_column] = layer_graph
+        layer_graph = layer_factory.create_layer(self.barrios_data, attributes_list)
+        self.layers[tuple(attributes_list)] = layer_graph
 
     def get_layer(self, attribute_column):
         """Retrieves a specific layer from the multiplex network.
