@@ -1,4 +1,9 @@
 
+ciiu_interested_for_tourism = [
+    "alojamientos",
+    "servicios_turisticos",
+    "entretenimiento",
+]
 
 ciiu_interes = {
     "alojamientos": [
