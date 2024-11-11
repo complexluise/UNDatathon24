@@ -1,5 +1,4 @@
 import geopandas as gpd
-import pandas as pd
 from pathlib import Path
 
 
@@ -55,26 +54,12 @@ class GeoDataHandler:
         return GeoDataHandler(self.geodata.to_crs(crs))
 
     def add_centroid(self):
-        """Add centroid coordinates as columns"""
-        self.geodata['longitude'] = self.geodata.geometry.centroid.x
-        self.geodata['latitude'] = self.geodata.geometry.centroid.y
+        """Add centroid coordinates as columns using proper projection"""
+        # Project to UTM Zone 18N (Medellín) for accurate centroid calculation
+        temp_geodata = self.geodata.to_crs('EPSG:32618')
+        centroids = temp_geodata.geometry.centroid
+        # Project centroids back to WGS84
+        centroids = centroids.to_crs('EPSG:4326')
+        self.geodata['longitude'] = centroids.x
+        self.geodata['latitude'] = centroids.y
         return self
-
-
-# Example usage:
-if __name__ == "__main__":
-    # Load and process data
-    establecimientos = gpd.read_file("datasets/GeoMedellin Seleccionado/establecimientos_de_indus.geojson")
-    handler = GeoDataHandler(establecimientos)
-
-    # Process and export workflow
-    (handler
-     .filter_by_attribute('codigociiu', ['5555', '5515'])
-     .reproject()  # Ensure WGS84 for web mapping
-     .add_centroid()  # Add coordinates for point data
-     .export_geojson("processed_establishments.geojson"))
-
-    # Process and export aggregated data
-    counts = (handler
-              .count_by_attribute('nombre_barrio')
-              .to_json("neighborhood_counts.json", orient='records'))
