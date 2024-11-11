@@ -2,9 +2,19 @@ import numpy as np
 import pandas as pd
 from scipy.spatial.distance import euclidean
 import networkx as nx
+from abc import ABC, abstractmethod
 
 
-class DistanceStrategy:
+class DistanceStrategy(ABC):
+    """Abstract base class for distance calculation strategies."""
+
+    @abstractmethod
+    def calculate(self, vector1, vector2):
+        """Abstract method for calculating distance between two vectors."""
+        pass
+
+
+class EuclidianDistance(DistanceStrategy):
     """Strategy for calculating distance between neighborhoods using Euclidean Distance.
 
     This class implements a static method to compute distances between vectors
