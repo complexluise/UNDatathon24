@@ -84,7 +84,7 @@ def fetch_geomedellin_data():
     df_filtered = df_filtered.drop(['formatos', 'processed_formats'], axis=1)
 
     # Save to CSV
-    output_file = 'medellin_geodata_filtered.csv'
+    output_file = 'medellin_geodata.csv'
     df_filtered.to_csv(output_file, index=False, encoding='utf-8')
     print(f"Data saved to {output_file}")
 
