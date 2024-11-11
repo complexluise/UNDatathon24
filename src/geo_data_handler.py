@@ -3,8 +3,8 @@ from pathlib import Path
 
 
 class GeoDataHandler:
-    def __init__(self, geodata):
-        self.geodata = geodata
+    def __init__(self, geodata: gpd.GeoDataFrame):
+        self.geodata: gpd.GeoDataFrame = geodata
 
     def filter_by_attribute(self, column: str, values: list):
         """Filter geodata by column values"""
