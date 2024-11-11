@@ -17,12 +17,11 @@ ciiu_interes = {
         "7990"  # Otros servicios de reserva y actividades relacionadas.
         ],
     "entretenimiento": [
-        "3012",  # Construcción de embarcaciones de recreo y deporte
         "8230",  # Organización de convenciones y eventos comerciales
         "9103",  # Actividades de jardines botánicos, zoológicos y reservas naturales
         "9200",  # Actividades de juegos de azar y apuestas
         "9321",  # Actividades de parques de atracciones y parques temáticos
-        "9329"  # Otras actividades recreativas y de esparcimiento n.c.p.
+        "9329",  # Otras actividades recreativas y de esparcimiento n.c.p.
     ],
     "transporte": [
         "4911",  # Transporte férreo de pasajeros
@@ -33,6 +32,12 @@ ciiu_interes = {
         "5112",  # Transporte aéreo internacional de pasajeros
     ],
     "alimentacion": [
+        "5611",  # Expendio a la mesa de comidas preparadas.
+        "5612",  # Expendio por autoservicio de comidas preparadas.
+        "5613",  # Expendio de comidas preparadas en cafeterías.
         "5619",  # Otros tipos de expendio de comidas preparadas n.c.p.
+    ],
+    "bares": [
+        "5630",  # Expendio de bebidas alcohólicas para el consumo dentro del establecimiento.
     ]
 }
