@@ -4,3 +4,4 @@ requests
 jupyter
 scipy
 networkx
+matplotlib
