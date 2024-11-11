@@ -5,18 +5,35 @@ import networkx as nx
 
 
 class DistanceStrategy:
-    """Estrategia de cálculo de distancia entre barrios usando Distancia Euclidiana."""
+    """Strategy for calculating distance between neighborhoods using Euclidean Distance.
+
+    This class implements a static method to compute distances between vectors
+    representing neighborhood attributes.
+    """
 
     @staticmethod
     def calculate(vector1, vector2):
+        """Calculates the Euclidean distance between two vectors.
+
+        Args:
+            vector1 (array-like): First vector of attributes.
+            vector2 (array-like): Second vector of attributes.
+
+        Returns:
+            float: The Euclidean distance between the vectors.
+        """
         return euclidean(vector1, vector2)
 
 
 class LayerFactory:
-    """
-    Fábrica para construir capas de la red multiplex.
-    Genera una capa donde los enlaces entre barrios están basados en una distancia.
-    y se crean solo si cumplen con el umbral de conexión.
+    """Factory for building layers of the multiplex network.
+
+    Generates a layer where links between neighborhoods are based on a distance
+    metric and are created only if they meet the connection threshold.
+
+    Attributes:
+        distance_strategy: Strategy object for calculating distances.
+        threshold (float): Maximum distance threshold for creating connections.
     """
 
     def __init__(self, distance_strategy, threshold):
@@ -24,30 +41,25 @@ class LayerFactory:
         self.threshold = threshold
 
     def create_layer(self, barrios_data, attribute_column):
-        """
-        Crea una capa de red basada en el atributo especificado.
+        """Creates a network layer based on the specified attribute.
 
         Args:
-        - barrios_data (pd.DataFrame): DataFrame con los datos de los barrios y sus atributos.
-        - attribute_column (str): Nombre de la columna del atributo para esta capa.
+            barrios_data (pd.DataFrame): DataFrame containing neighborhood data and attributes.
+            attribute_column (str): Name of the attribute column for this layer.
 
         Returns:
-        - nx.Graph: Grafo de la capa con enlaces ponderados.
+            nx.Graph: Graph of the layer with weighted edges.
         """
-        # Crear el grafo de la capa
         layer_graph = nx.Graph()
 
-        # Iterar sobre pares de barrios
         for i, barrio_i in barrios_data.iterrows():
             for j, barrio_j in barrios_data.iterrows():
-                if i < j:  # Evitar duplicados y la diagonal
-                    # Calcular distancia entre los atributos de los dos barrios
+                if i < j:
                     distance = self.distance_strategy.calculate(
                         barrio_i[attribute_column],
                         barrio_j[attribute_column]
                     )
 
-                    # Aplicar umbral de conexión
                     if distance <= self.threshold:
                         layer_graph.add_edge(
                             barrio_i['barrio_id'], barrio_j['barrio_id'], weight=1 / (1 + distance)
@@ -57,29 +69,47 @@ class LayerFactory:
 
 
 class MultiplexNetwork:
-    """Clase principal que gestiona la red multiplex y sus capas."""
+    """Main class that manages the multiplex network and its layers.
+
+    This class handles the creation and management of multiple network layers,
+    each representing different neighborhood attributes.
+
+    Attributes:
+        barrios_data (pd.DataFrame): DataFrame containing neighborhood data.
+        layers (dict): Dictionary storing the network layers.
+    """
 
     def __init__(self, barrios_data):
         self.barrios_data = barrios_data
         self.layers = {}
 
     def add_layer(self, attribute_column, distance_strategy, threshold):
-        """
-        Añade una capa a la red multiplex para un atributo específico.
+        """Adds a layer to the multiplex network for a specific attribute.
 
         Args:
-        - attribute_column (str): Nombre de la columna del atributo.
-        - distance_strategy (DistanceStrategy): Estrategia de cálculo de distancia.
-        - threshold (float): Umbral de conexión.
+            attribute_column (str): Name of the attribute column.
+            distance_strategy (DistanceStrategy): Strategy for calculating distances.
+            threshold (float): Connection threshold.
         """
         layer_factory = LayerFactory(distance_strategy, threshold)
         layer_graph = layer_factory.create_layer(self.barrios_data, attribute_column)
         self.layers[attribute_column] = layer_graph
 
     def get_layer(self, attribute_column):
-        """Obtiene una capa específica de la red multiplex."""
+        """Retrieves a specific layer from the multiplex network.
+
+        Args:
+            attribute_column (str): Name of the attribute column.
+
+        Returns:
+            nx.Graph: The requested network layer, or None if not found.
+        """
         return self.layers.get(attribute_column, None)
 
     def get_multiplex_layers(self):
-        """Retorna todas las capas de la red multiplex."""
+        """Returns all layers in the multiplex network.
+
+        Returns:
+            dict: Dictionary containing all network layers.
+        """
         return self.layers
