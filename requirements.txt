@@ -1,0 +1,10 @@
+tqdm
+geopandas
+requests
+jupyter
+scipy
+networkx
+matplotlib
+seaborn
+scikit-learn
+plotly
