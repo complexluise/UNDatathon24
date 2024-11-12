@@ -245,20 +245,20 @@ def main():
     Main function to run the clustering analysis
     """
     # Load data
-    datos = load_and_prepare_data('datos_curados.csv')
+    datos = load_and_prepare_data('datos_curados.csv')  # TODO Change
 
     # Display basic information
     display_basic_info(datos)
 
     # Plot distributions
-    variables_to_plot = ['tea', 't_sob', 't_form_te', 'Edad_prom']
+    variables_to_plot = ['tea', 't_sob', 't_form_te', 'Edad_prom'] # TODO Change
     plot_distributions(datos, variables_to_plot)
 
     # Create correlation matrix
-    corr_matrix = create_correlation_matrix(datos, exclude_cols=['CodUPL', 'NombreUPL'])
+    corr_matrix = create_correlation_matrix(datos, exclude_cols=['CodUPL', 'NombreUPL'])  # TODO Change
 
     # Prepare data for clustering
-    selected_vars = ['tea', 't_sob', 'Edad_prom', 't_form_te']
+    selected_vars = ['tea', 't_sob', 'Edad_prom', 't_form_te']  # TODO Change
     km, km_scale = prepare_clustering_data(datos, selected_vars)
 
     # Perform K-means clustering
@@ -272,7 +272,7 @@ def main():
 
     # Perform DBSCAN clustering
     dbscan, dbscan_labels = perform_dbscan(km_scale)
-    plot_dbscan_results(km_scale, dbscan_labels, 'tea', 't_sob')
+    plot_dbscan_results(km_scale, dbscan_labels, 'tea', 't_sob')  # TODO Change
     dbscan_summary = calculate_cluster_summary(datos, dbscan_labels, selected_vars, 'DBSCAN Cluster')
 
     return datos, kmeans_labels, hier_labels, dbscan_labels
